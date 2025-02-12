@@ -11,10 +11,10 @@ pipeline {
             apiVersion: v1
             kind: Pod
             metadata:
-              name: kaniko
+              name: "kaniko"
             spec:
               containers:
-              - name: kaniko
+              - name: "kaniko"
                 image: gcr.io/kaniko-project/executor:latest
                 args: ["--dockerfile=/workspace/dockerfile",
                         "--context=dir://workspace",
