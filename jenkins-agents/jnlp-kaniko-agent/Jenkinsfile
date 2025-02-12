@@ -6,7 +6,8 @@ pipeline {
         DOCKER_REPOSITORY_NAME="skmaifujalam/evicted-pod-cleaner"
     }
     agent {
-        kubernetes { """
+        kubernetes {
+          """
           yaml
             apiVersion: v1
             kind: Pod
@@ -34,7 +35,8 @@ pipeline {
                         path: config.json
                 - name: dockerfile-storage
                   persistentVolumeClaim:
-                    claimName: dockerfile-claim """
+                    claimName: dockerfile-claim
+          """
         }
     }
 
