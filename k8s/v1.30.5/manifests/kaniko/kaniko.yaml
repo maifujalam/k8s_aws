@@ -1,21 +1,21 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: kaniko
+  name: jenkins-agent-raw
 spec:
   containers:
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:v1.20.0
+  - name: jenkins-agent-raw
+    image: gcr.io/jenkins-agent-raw-project/executor:v1.20.0
     imagePullPolicy: IfNotPresent
     args: ["--dockerfile=/workspace/Dockerfile",
             "--context=dir://workspace",
             "--insecure-registry=docker-registry:5000",
             --destination=ubuntu-local:1]
     volumeMounts:
-      - name: pvc-kaniko
+      - name: pvc-jenkins-agent-raw
         mountPath: /workspace
   restartPolicy: Never
   volumes:
-    - name: pvc-kaniko
+    - name: pvc-jenkins-agent-raw
       persistentVolumeClaim:
-        claimName: pvc-kaniko
+        claimName: pvc-jenkins-agent-raw

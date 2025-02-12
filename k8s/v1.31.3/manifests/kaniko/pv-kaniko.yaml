@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv-kaniko
+  name: pv-jenkins-agent-raw
   labels:
     type: local
 spec:
@@ -11,4 +11,4 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/vagrant/manifests/kaniko/Dockerfiles/"
+    path: "/vagrant/manifests/jenkins-agent-raw/Dockerfiles/"
