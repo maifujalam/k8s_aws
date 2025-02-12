@@ -85,9 +85,6 @@ pipeline {
                     echo "Pushing Docker Image to registry"
                     dir("${params.FOLDER_PATH}") {
                         echo "helm chart to push: ${params.FOLDER_PATH}";
-                        def LATEST_HELM_CHART=$(ls -t ${TMP_DIR}/${CHART_NAME}-*.tgz | head -n 1)
-                        echo "Latest helm chart build: ${LATEST_HELM_CHART}"
-                        helm s3 push --force $LATEST_HELM_CHART ${HELM_REPO_NAME};
                     }
                 }
             }
