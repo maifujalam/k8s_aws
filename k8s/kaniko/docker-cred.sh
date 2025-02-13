@@ -1,0 +1,2 @@
+kubectl -n jenkins create secret docker-registry regcred --docker-server=skmaifujalam/evicted-pod-cleaner \
+--docker-username=skmaifujalam --docker-password=Newman123@ --docker-email=sk.maifujalam@gmail.com
