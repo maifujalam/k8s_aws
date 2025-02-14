@@ -17,9 +17,7 @@ pipeline {
           containers:
           - name: kaniko
             image: gcr.io/kaniko-project/executor:latest
-            args: ["--dockerfile=/workspace/Dockerfile",
-                    "--context=dir:///workspace",
-                    "--destination=${DOCKER_REPOSITORY_NAME}:${BUILD_NUMBER}"]
+            args: []
             volumeMounts:
               - name: kaniko-secret
                 mountPath: /kaniko/.docker
