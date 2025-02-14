@@ -17,7 +17,7 @@ pipeline {
           containers:
           - name: kaniko
             image: gcr.io/kaniko-project/executor:latest
-            args: ["sleep","3600"]
+            args: ["--help"]
             volumeMounts:
               - name: kaniko-secret
                 mountPath: /kaniko/.docker
