@@ -1,79 +1,71 @@
 pipeline {
-//     agent any
     environment {
         APP_NAME = 'evicted-pod-cleaner'
         APP_FOLDER_PATH = "EvictedPodCleaner"
-        DOCKER_REPOSITORY_NAME="skmaifujalam/evicted-pod-cleaner"
+        DOCKER_REPOSITORY_NAME = "skmaifujalam/evicted-pod-cleaner"
     }
+
     agent {
         kubernetes {
             yaml """
-            apiVersion: v1
-            kind: Pod
-            metadata:
-              name: kaniko
-            spec:
-              containers:
-              - name: kaniko
-                image: gcr.io/kaniko-project/executor:latest
-                args: ["--dockerfile=/workspace/Dockerfile",
-                        "--context=dir:///workspace",
-                        "--destination=\$DOCKER_REPOSITORY_NAME:\$BUILD_NUMBER"]
-                volumeMounts:
-                  - name: kaniko-secret
-                    mountPath: /kaniko/.docker
-                  - name: dockerfile-storage
-                    mountPath: /workspace
-              restartPolicy: Never
-              volumes:
-                - name: kaniko-secret
-                  secret:
-                    secretName: regcred
-                    items:
-                      - key: .dockerconfigjson
-                        path: config.json
-                - name: dockerfile-storage
-                  persistentVolumeClaim:
-                    claimName: dockerfile-claim
-            """
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko
+spec:
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:latest
+    args: ["--dockerfile=/workspace/Dockerfile",
+            "--context=dir:///workspace",
+            "--destination=$$DOCKER_REPOSITORY_NAME:$$BUILD_NUMBER"]
+    volumeMounts:
+      - name: kaniko-secret
+        mountPath: /kaniko/.docker
+      - name: dockerfile-storage
+        mountPath: /workspace
+  restartPolicy: Never
+  volumes:
+    - name: kaniko-secret
+      secret:
+        secretName: regcred
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+    - name: dockerfile-storage
+      persistentVolumeClaim:
+        claimName: dockerfile-claim
+"""
         }
     }
 
     parameters {
-        string(name: 'GIT_REPO_NAME', defaultValue: 'https://github.com/maifujalam/k8s_aws.git', description: 'Enter the git remote name')
-        string(name: 'GIT_BRANCH_NAME', defaultValue: 'master', description: 'Enter the branch name to pull from')
-        string(name: 'APP_FOLDER_PATH', defaultValue: 'EvictedPodCleaner', description: 'Enter the folder path name which to be helm build')    }
+        string(name: 'GIT_REPO_NAME', defaultValue: 'https://github.com/maifujalam/k8s_aws.git', description: 'Enter the git repo URL')
+        string(name: 'GIT_BRANCH_NAME', defaultValue: 'master', description: 'Enter the branch name')
+        string(name: 'APP_FOLDER_PATH', defaultValue: 'EvictedPodCleaner', description: 'Folder containing the Dockerfile')
+    }
+
     stages {
         stage('Git Checkout') {
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "${params.BRANCH_NAME}"]],
-                    userRemoteConfigs: [[url: "${params.REPO_NAME}"]]
+                checkout([$class: 'GitSCM',
+                    branches: [[name: "${params.GIT_BRANCH_NAME}"]],
+                    userRemoteConfigs: [[url: "${params.GIT_REPO_NAME}"]]
                 ])
             }
         }
-        stage('Build Docker Image') {
+
+        stage('Build Docker Image with Kaniko') {
             steps {
-                script {
-                    // Build and package the Helm chart
-                    dir("${params.FOLDER_PATH}") {
-                        echo "Folder to build: ${params.FOLDER_PATH}";
-                        try {
-                            // Run helm template command
-                            def lint_output = sh(script: 'helm lint .', returnStdout: true).trim()
-                            echo "Helm lint output:\n${lint_output}"
-                            echo "\n\nHelm lint successful.\n"
-                        } catch (Exception e) {
-                            error("Helm lint failed: ${e}")
-                        }
-                        try {
-                            // Run helm template command
-                            def package_output = sh(script: 'helm package .', returnStdout: true).trim()
-                            echo "Helm package output:\n${package_output}"
-                            echo "\n\nHelm package successful.\n"
-                        } catch (Exception e) {
-                            error("Helm package failed: ${e}")
+                container('kaniko') {
+                    script {
+                        dir("${params.APP_FOLDER_PATH}") {
+                            sh '''
+                            /kaniko/executor \
+                                --dockerfile=Dockerfile \
+                                --context=dir:///workspace \
+                                --destination=$DOCKER_REPOSITORY_NAME:$BUILD_NUMBER
+                            '''
                         }
                     }
                 }
@@ -84,9 +76,6 @@ pipeline {
             steps {
                 script {
                     echo "Pushing Docker Image to registry"
-                    dir("${params.FOLDER_PATH}") {
-                        echo "helm chart to push: ${params.FOLDER_PATH}";
-                    }
                 }
             }
         }
