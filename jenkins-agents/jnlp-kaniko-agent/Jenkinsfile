@@ -50,25 +50,6 @@ pipeline {
                 ])
             }
         }
-
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    echo "Pushing Docker Image to registry"
-                }
-            }
-        }
     }
 
-    post {
-        always {
-            echo "Pipeline finished"
-        }
-        failure {
-            echo "Pipeline failed"
-        }
-        success {
-            echo "Helm chart build successful"
-        }
-    }
 }
