@@ -17,6 +17,7 @@ pipeline {
                   containers:
                   - name: kaniko
                     image: gcr.io/kaniko-project/executor:latest
+                    command: ["/kaniko/executor"]
                     args: ["--dockerfile=/workspace/Dockerfile",
                             "--context=dir:///workspace",
                             "--destination=${DOCKER_REPOSITORY_NAME}:${BUILD_NUMBER}"]
@@ -50,22 +51,22 @@ pipeline {
             }
         }
 
-//         stage('Build Docker Image with Kaniko') {
-//             steps {
-//                 container('kaniko') {
-//                     script {
-//                         dir("${params.APP_FOLDER_PATH}") {
-//                             sh '''
-//                             /kaniko/executor \
-//                                 --dockerfile=Dockerfile \
-//                                 --context=dir:///workspace \
-//                                 --destination=$DOCKER_REPOSITORY_NAME:$BUILD_NUMBER
-//                             '''
-//                         }
-//                     }
-//                 }
-//             }
-//         }
+        stage('Build Docker Image with Kaniko') {
+            steps {
+                container('kaniko') {
+                    script {
+                        dir("${params.APP_FOLDER_PATH}") {
+                            sh '''
+                            /kaniko/executor \
+                                --dockerfile=Dockerfile \
+                                --context=dir:///workspace \
+                                --destination=${DOCKER_REPOSITORY_NAME}:${BUILD_NUMBER}
+                            '''
+                        }
+                    }
+                }
+            }
+        }
 
         stage('Push Docker Image') {
             steps {
