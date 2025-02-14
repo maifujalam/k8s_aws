@@ -19,7 +19,7 @@ pipeline {
               namespace: "jenkins"
             spec:
               containers:
-              - args:
+              - name: "jnlp"
                 env:
                 - name: "JENKINS_TUNNEL"
                   value: "jenkins-agent.jenkins.svc.cluster.local:50000"
@@ -31,7 +31,6 @@ pipeline {
                   value: "http://jenkins.jenkins.svc.cluster.local:8080/"
                 image: "docker.io/skmaifujalam/jenkins-agent:v1.0.2"
                 imagePullPolicy: "IfNotPresent"
-                name: "jnlp"
                 resources:
                   limits:
                     memory: "512Mi"
@@ -45,6 +44,17 @@ pipeline {
                   name: "workspace-volume"
                   readOnly: false
                 workingDir: "/home/jenkins/agent"
+              - name: kaniko
+                image: gcr.io/kaniko-project/executor:latest
+                command: ["/kaniko/executor"]
+                args: ["--dockerfile=/workspace/Dockerfile",
+                        "--context=dir://workspace",
+                        "--destination=${DOCKER_REPOSITORY_NAME}:${BUILD_NUMBER}"]
+                volumeMounts:
+                  - name: kaniko-secret
+                    mountPath: /kaniko/.docker
+                  - name: dockerfile-storage
+                    mountPath: /workspace
               nodeSelector:
                 kubernetes.io/os: "linux"
               restartPolicy: "Never"
@@ -53,6 +63,15 @@ pipeline {
               - emptyDir:
                   medium: ""
                 name: "workspace-volume"
+              - name: kaniko-secret
+                secret:
+                  secretName: regcred
+                  items:
+                    - key: .dockerconfigjson
+                      path: config.json
+              - emptyDir:
+                medium: ""
+                name: "dockerfile-storage"
         '''
         }
     }
