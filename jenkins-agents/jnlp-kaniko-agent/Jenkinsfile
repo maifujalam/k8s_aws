@@ -1,7 +1,10 @@
 pipeline {
-    environment {
-        APP_NAME = 'evicted-pod-cleaner'
-        DOCKER_REPOSITORY_NAME = "skmaifujalam/evicted-pod-cleaner"
+    parameters {
+        string(name: 'GIT_REPO_NAME', defaultValue: 'https://github.com/maifujalam/k8s_aws.git', description: 'Enter the git repo URL')
+        string(name: 'GIT_BRANCH_NAME', defaultValue: 'master', description: 'Enter the branch name')
+        string(name: 'APP_FOLDER_PATH', defaultValue: 'EvictedPodCleaner', description: 'Folder containing the Dockerfile')
+        string(name: 'APP_NAME', defaultValue: 'evicted-pod-cleaner', description: 'App name')
+        string(name: 'DOCKER_REPOSITORY_NAME', defaultValue: 'skmaifujalam/evicted-pod-cleaner', description: 'Docker repository Name')
     }
     agent {
         kubernetes {
@@ -37,14 +40,6 @@ pipeline {
         }
     }
 
-    parameters {
-        string(name: 'GIT_REPO_NAME', defaultValue: 'https://github.com/maifujalam/k8s_aws.git', description: 'Enter the git repo URL')
-        string(name: 'GIT_BRANCH_NAME', defaultValue: 'master', description: 'Enter the branch name')
-        string(name: 'APP_FOLDER_PATH', defaultValue: 'EvictedPodCleaner', description: 'Folder containing the Dockerfile')
-        string(name: 'APP_NAME', defaultValue: 'evicted-pod-cleaner', description: 'App name')
-        string(name: 'DOCKER_REPOSITORY_NAME', defaultValue: 'skmaifujalam/evicted-pod-cleaner', description: 'Docker repository Name')
-    }
-
     stages {
         stage('Git Checkout') {
             steps {
@@ -55,31 +50,31 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image with Kaniko') {
-            steps {
-                container('kaniko') {
-                    script {
-                        dir("${params.APP_FOLDER_PATH}") {
-                            sh '''
-                            /kaniko/executor \
-                                --dockerfile=Dockerfile \
-                                --context=dir:///workspace \
-                                --destination=$DOCKER_REPOSITORY_NAME:$BUILD_NUMBER
-                            '''
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    echo "Pushing Docker Image to registry"
-                }
-            }
-        }
-    }
+//         stage('Build Docker Image with Kaniko') {
+//             steps {
+//                 container('kaniko') {
+//                     script {
+//                         dir("${params.APP_FOLDER_PATH}") {
+//                             sh '''
+//                             /kaniko/executor \
+//                                 --dockerfile=Dockerfile \
+//                                 --context=dir:///workspace \
+//                                 --destination=$DOCKER_REPOSITORY_NAME:$BUILD_NUMBER
+//                             '''
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//
+//         stage('Push Docker Image') {
+//             steps {
+//                 script {
+//                     echo "Pushing Docker Image to registry"
+//                 }
+//             }
+//         }
+//     }
 
     post {
         always {
