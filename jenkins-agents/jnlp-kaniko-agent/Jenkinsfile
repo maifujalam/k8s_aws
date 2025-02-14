@@ -7,35 +7,35 @@ pipeline {
 
     agent {
         kubernetes {
-            yaml """
-apiVersion: v1
-kind: Pod
-metadata:
-  name: kaniko
-spec:
-  containers:
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:latest
-    args: ["--dockerfile=/workspace/Dockerfile",
-            "--context=dir:///workspace",
-            "--destination=$$DOCKER_REPOSITORY_NAME:$$BUILD_NUMBER"]
-    volumeMounts:
-      - name: kaniko-secret
-        mountPath: /kaniko/.docker
-      - name: dockerfile-storage
-        mountPath: /workspace
-  restartPolicy: Never
-  volumes:
-    - name: kaniko-secret
-      secret:
-        secretName: regcred
-        items:
-          - key: .dockerconfigjson
-            path: config.json
-    - name: dockerfile-storage
-      persistentVolumeClaim:
-        claimName: dockerfile-claim
-"""
+                    yaml """
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          name: kaniko
+        spec:
+          containers:
+          - name: kaniko
+            image: gcr.io/kaniko-project/executor:latest
+            args: ["--dockerfile=/workspace/Dockerfile",
+                    "--context=dir:///workspace",
+                    "--destination=$$DOCKER_REPOSITORY_NAME:$$BUILD_NUMBER"]
+            volumeMounts:
+              - name: kaniko-secret
+                mountPath: /kaniko/.docker
+              - name: dockerfile-storage
+                mountPath: /workspace
+          restartPolicy: Never
+          volumes:
+            - name: kaniko-secret
+              secret:
+                secretName: regcred
+                items:
+                  - key: .dockerconfigjson
+                    path: config.json
+            - name: dockerfile-storage
+              persistentVolumeClaim:
+                claimName: dockerfile-claim
+        """
         }
     }
 
