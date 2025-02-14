@@ -66,15 +66,15 @@ pipeline {
 //                 }
 //             }
 //         }
-//
-//         stage('Push Docker Image') {
-//             steps {
-//                 script {
-//                     echo "Pushing Docker Image to registry"
-//                 }
-//             }
-//         }
-//     }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    echo "Pushing Docker Image to registry"
+                }
+            }
+        }
+    }
 
     post {
         always {
