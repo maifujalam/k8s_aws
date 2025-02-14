@@ -9,34 +9,54 @@ pipeline {
     agent {
         kubernetes {
             yaml """
-                apiVersion: v1
-                kind: Pod
-                metadata:
-                  name: kaniko
-                spec:
-                  containers:
-                  - name: kaniko
-                    image: gcr.io/kaniko-project/executor:latest
-                    command: ["/kaniko/executor"]
-                    args: ["--dockerfile=/workspace/Dockerfile",
-                            "--context=dir:///workspace",
-                            "--destination=${DOCKER_REPOSITORY_NAME}:${BUILD_NUMBER}"]
-                    volumeMounts:
-                      - name: kaniko-secret
-                        mountPath: /kaniko/.docker
-                      - name: dockerfile-storage
-                        mountPath: /workspace
-                  restartPolicy: Never
-                  volumes:
-                    - name: kaniko-secret
-                      secret:
-                        secretName: regcred
-                        items:
-                          - key: .dockerconfigjson
-                            path: config.json
-                    - emptyDir:
-                        medium: ""
-                      name: "dockerfile-storage"
+            apiVersion: "v1"
+            kind: "Pod"
+            metadata:
+              labels:
+                jenkins/jenkins-jenkins-agent: "true"
+                jenkins/label: "jenkins-jenkins-agent"
+                kubernetes.jenkins.io/controller: "http___jenkins_jenkins_svc_cluster_local_8080x"
+              namespace: "jenkins"
+            spec:
+              containers:
+              - args:
+                env:
+                - name: "JENKINS_TUNNEL"
+                  value: "jenkins-agent.jenkins.svc.cluster.local:50000"
+                - name: "REMOTING_OPTS"
+                  value: "-noReconnectAfter 1d"
+                - name: "JENKINS_AGENT_WORKDIR"
+                  value: "/home/jenkins/agent"
+                - name: "JENKINS_URL"
+                  value: "http://jenkins.jenkins.svc.cluster.local:8080/"
+                image: "docker.io/skmaifujalam/jenkins-agent:v1.0.2"
+                imagePullPolicy: "IfNotPresent"
+                name: "jnlp"
+                resources:
+                  limits:
+                    memory: "512Mi"
+                    cpu: "500m"
+                  requests:
+                    memory: "256Mi"
+                    cpu: "250m"
+                tty: false
+                volumeMounts:
+                - mountPath: "/home/jenkins/agent"
+                  name: "workspace-volume"
+                  readOnly: false
+                workingDir: "/home/jenkins/agent"
+              - args:
+                image: "docker.io/skmaifujalam/nginx
+                command: pwd
+              nodeSelector:
+                kubernetes.io/os: "linux"
+              restartPolicy: "Never"
+              serviceAccountName: "default"
+              volumes:
+              - emptyDir:
+                  medium: ""
+                name: "workspace-volume"
+            '''
         """
         }
     }
