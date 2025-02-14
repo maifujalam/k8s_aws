@@ -34,9 +34,9 @@ pipeline {
                         items:
                           - key: .dockerconfigjson
                             path: config.json
-                    - name: dockerfile-storage
-                      persistentVolumeClaim:
-                        claimName: dockerfile-claim
+                    - emptyDir:
+                        medium: ""
+                      name: "dockerfile-storage"
         """
         }
     }
