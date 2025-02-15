@@ -14,7 +14,7 @@ pipeline {
               containers:
               - name: kaniko
                 image: gcr.io/kaniko-project/executor:debug
-                imagePullPolicy: Always
+                imagePullPolicy: IfNotPresent
                 command:
                 - sleep
                 args:
@@ -52,7 +52,7 @@ pipeline {
                   sh '''#!/busybox/sh
                   pwd
                   ls
-                  /kaniko/executor --context `pwd` --destination
+                  /kaniko/executor --context `pwd` --destination ${DOCKER_REPOSITORY_NAME}:${BUILD_NUMBER}
                   '''
                 }
             }
