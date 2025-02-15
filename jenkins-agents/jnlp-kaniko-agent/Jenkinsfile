@@ -45,7 +45,7 @@ pipeline {
                   readOnly: false
                 workingDir: "/home/jenkins/agent"
               - name: kaniko
-                image: gcr.io/kaniko-project/executor:latest
+                image: gcr.io/kaniko-project/executor:debug
                 resources:
                   limits:
                     memory: "512Mi"
