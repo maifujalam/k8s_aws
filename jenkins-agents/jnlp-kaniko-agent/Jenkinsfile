@@ -53,8 +53,8 @@ pipeline {
                   requests:
                     memory: "256Mi"
                     cpu: "250m"
-                command: ["ls"]
-                args: ["/kaniko"]
+                command: ["sleep"]
+                args: ["infinity"]
                 volumeMounts:
                   - name: kaniko-secret
                     mountPath: /kaniko/.docker
