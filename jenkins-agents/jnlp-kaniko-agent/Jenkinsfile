@@ -46,6 +46,13 @@ pipeline {
                 workingDir: "/home/jenkins/agent"
               - name: kaniko
                 image: gcr.io/kaniko-project/executor:latest
+                resources:
+                  limits:
+                    memory: "512Mi"
+                    cpu: "500m"
+                  requests:
+                    memory: "256Mi"
+                    cpu: "250m"
                 command: ["/kaniko/executor"]
                 args: ["--dockerfile=/workspace/Dockerfile",
                         "--context=dir://workspace",
