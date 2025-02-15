@@ -9,78 +9,29 @@ pipeline {
     agent {
         kubernetes {
             yaml '''
-            apiVersion: "v1"
-            kind: "Pod"
-            metadata:
-              labels:
-                jenkins/jenkins-jenkins-agent: "true"
-                jenkins/label: "jenkins-jenkins-agent"
-                kubernetes.jenkins.io/controller: "http___jenkins_jenkins_svc_cluster_local_8080x"
-              namespace: "jenkins"
-            spec:
-              containers:
-              - name: "jnlp"
-                env:
-                - name: "JENKINS_TUNNEL"
-                  value: "jenkins-agent.jenkins.svc.cluster.local:50000"
-                - name: "REMOTING_OPTS"
-                  value: "-noReconnectAfter 1d"
-                - name: "JENKINS_AGENT_WORKDIR"
-                  value: "/home/jenkins/agent"
-                - name: "JENKINS_URL"
-                  value: "http://jenkins.jenkins.svc.cluster.local:8080/"
-                image: "docker.io/skmaifujalam/jenkins-agent:v1.0.2"
-                imagePullPolicy: "IfNotPresent"
-                resources:
-                  limits:
-                    memory: "512Mi"
-                    cpu: "500m"
-                  requests:
-                    memory: "256Mi"
-                    cpu: "250m"
-                tty: false
-                volumeMounts:
-                - mountPath: "/home/jenkins/agent"
-                  name: "workspace-volume"
-                  readOnly: false
-                workingDir: "/home/jenkins/agent"
-              - name: kaniko
-                image: gcr.io/kaniko-project/executor:debug
-                resources:
-                  limits:
-                    memory: "512Mi"
-                    cpu: "500m"
-                  requests:
-                    memory: "256Mi"
-                    cpu: "250m"
-                command: ["sleep"]
-                args: ["36000"]
-                env:
-                - name: PATH
-                  value: /usr/local/bin:/kaniko:/usr/bin
-                volumeMounts:
-                  - name: kaniko-secret
-                    mountPath: /kaniko/.docker
-                  - name: dockerfile-storage
-                    mountPath: /workspace
-              nodeSelector:
-                kubernetes.io/os: "linux"
-              restartPolicy: "Never"
-              serviceAccountName: "default"
-              volumes:
-              - emptyDir:
-                  medium: ""
-                name: "workspace-volume"
-              - name: kaniko-secret
-                secret:
-                  secretName: docker-credentials
-                  items:
-                    - key: .dockerconfigjson
-                      path: config.json
-              - emptyDir:
-                medium: ""
-                name: "dockerfile-storage"
-        '''
+kind: Pod
+spec:
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    imagePullPolicy: Always
+    command:
+    - sleep
+    args:
+    - 9999999
+    volumeMounts:
+      - name: jenkins-docker-cfg
+        mountPath: /kaniko/.docker
+  volumes:
+  - name: jenkins-docker-cfg
+    projected:
+      sources:
+      - secret:
+          name: docker-credentials
+          items:
+            - key: .dockerconfigjson
+              path: config.json
+'''
         }
     }
 
@@ -97,13 +48,11 @@ pipeline {
         }
         stage('Sleeper') {
             steps {
-                container(name: 'kaniko') {
-                    script {
-                        echo "Pushing Helm chart to repository"
-                        dir("${params.APP_FOLDER_PATH}") {
-                           sleep 3600
-                        }
-                    }
+                container(name: 'kaniko',shell: '/busybox/sh') {
+                  sh '''#!/busybox/sh
+                    echo "FROM jenkins/inbound-agent:latest" > Dockerfile
+                    /kaniko/executor --context `pwd` --destination darinpope/hello-kaniko:latest
+                  '''
                 }
             }
         }
