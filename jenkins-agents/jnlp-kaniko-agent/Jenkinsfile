@@ -4,7 +4,7 @@ pipeline {
         string(name: 'GIT_BRANCH_NAME', defaultValue: 'master', description: 'Enter the branch name')
         string(name: 'APP_FOLDER_PATH', defaultValue: 'EvictedPodCleaner', description: 'Folder containing the Dockerfile')
         string(name: 'APP_NAME', defaultValue: 'evicted-pod-cleaner', description: 'App name')
-        string(name: 'DOCKER_REPOSITORY_NAME', defaultValue: 'skmaifujalam/evicted-pod-cleaner', description: 'Docker repository Name')
+        string(name: 'DOCKER_REPOSITORY_NAME', defaultValue: 'skmaifujalam', description: 'Docker Repo Username')
     }
     agent {
         kubernetes {
@@ -46,13 +46,11 @@ pipeline {
                 }
             }
         }
-        stage('Sleeper') {
+        stage('Build and Push') {
             steps {
                 container(name: 'kaniko',shell: '/busybox/sh') {
                   sh '''#!/busybox/sh
-                  pwd
-                  ls
-                  /kaniko/executor --context ${APP_FOLDER_PATH} --destination ${DOCKER_REPOSITORY_NAME}:${BUILD_NUMBER}
+                  /kaniko/executor --context ${APP_FOLDER_PATH} --destination ${DOCKER_REPOSITORY_NAME}/${APP_NAME}:${BUILD_NUMBER}
                   '''
                 }
             }
