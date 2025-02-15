@@ -45,7 +45,7 @@ pipeline {
                   readOnly: false
                 workingDir: "/home/jenkins/agent"
               - name: kaniko
-                image: ubuntu:24.04
+                image: gcr.io/kaniko-project/executor:latest
                 resources:
                   limits:
                     memory: "512Mi"
@@ -54,7 +54,7 @@ pipeline {
                     memory: "256Mi"
                     cpu: "250m"
                 command: ["ls"]
-                args: ["/kaniko/executor"]
+                args: ["/kaniko"]
                 volumeMounts:
                   - name: kaniko-secret
                     mountPath: /kaniko/.docker
