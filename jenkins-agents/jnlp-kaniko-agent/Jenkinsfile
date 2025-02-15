@@ -73,7 +73,7 @@ pipeline {
                 name: "workspace-volume"
               - name: kaniko-secret
                 secret:
-                  secretName: regcred
+                  secretName: docker-credentials
                   items:
                     - key: .dockerconfigjson
                       path: config.json
