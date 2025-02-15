@@ -45,7 +45,7 @@ pipeline {
                   readOnly: false
                 workingDir: "/home/jenkins/agent"
               - name: kaniko
-                image: ngnix
+                image: ubuntu:24.04
                 resources:
                   limits:
                     memory: "512Mi"
