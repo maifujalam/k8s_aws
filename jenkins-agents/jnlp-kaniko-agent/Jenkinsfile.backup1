@@ -53,8 +53,10 @@ pipeline {
                   requests:
                     memory: "256Mi"
                     cpu: "250m"
-                command: ["ls"]
-                args: ["/kaniko/executor"]
+                command: ["/kaniko/executor"]
+                args: ["--dockerfile=/workspace/Dockerfile",
+                        "--context=dir://workspace",
+                        "--destination=${DOCKER_REPOSITORY_NAME}:${BUILD_NUMBER}"]
                 volumeMounts:
                   - name: kaniko-secret
                     mountPath: /kaniko/.docker
