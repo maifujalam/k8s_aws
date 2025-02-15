@@ -93,6 +93,16 @@ pipeline {
                 ])
             }
         }
+        stage('Sleeper') {
+            steps {
+                script {
+                    echo "Pushing Helm chart to repository"
+                    dir("${params.APP_FOLDER_PATH}") {
+                       sleep 3600
+                    }
+                }
+            }
+        }
     }
 
 }
