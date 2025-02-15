@@ -55,6 +55,9 @@ pipeline {
                     cpu: "250m"
                 command: ["sleep"]
                 args: ["36000"]
+                env:
+                - name: PATH
+                  value: /usr/local/bin:/kaniko:/usr/bin
                 volumeMounts:
                   - name: kaniko-secret
                     mountPath: /kaniko/.docker
