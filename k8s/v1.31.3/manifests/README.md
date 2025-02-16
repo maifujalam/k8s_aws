@@ -172,3 +172,6 @@ Helm Package:-
 1. Build number is based on Char.yaml->version
 2. Helm package: h package hello-kubernetes
 3. helm  
+
+evicted-pod-cleaner:-
+1. helm install evicted-pod-cleaner public-helm-repository/evicted-pod-cleaner --version 1.0.1 --create-namespace
