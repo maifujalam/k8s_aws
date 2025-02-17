@@ -21,7 +21,9 @@ pipeline {
                             echo "Output: ${output}"
                             try {
                                 // Run helm template command
-                                jq
+                                def output2 = sh(script: "echo $PATH; ls /usr/local/bin;jq", returnStdout: true).trim()
+                                  echo "Output2: ${output2}"
+
                             } catch (Exception e) {
                                 error("Helm template validation failed: ${e}")
                             }
