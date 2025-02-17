@@ -17,7 +17,7 @@ pipeline {
                 script {
                      dir("${params.ARGO_APP_FOLDER_PATH}") {
                             echo "Folder of ArgoCD Apps: ${params.CHART_FOLDER_PATH}";
-                            def output = sh(script: 'ls | grep -i ${params.ARGO_APP_NAME}' , returnStdout: true).trim()
+                            def output = sh(script: "find . -maxdepth 1 -type f -iname '${params.ARGO_APP_NAME}*'", returnStdout: true).trim()
                             echo "Output: ${output}"
                             try {
                                 // Run helm template command
