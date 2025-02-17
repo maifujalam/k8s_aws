@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: evicted-pod-cleaner.yaml
+  name: evicted-pod-cleaner
   namespace: argo-cd  # Argo CD only listen for application type to the argocd installed namespace(argo-cd in this case).So its constant.
 spec:
   destination:
-    namespace: evicted-pod-cleaner.yaml
+    namespace: evicted-pod-cleaner
     server: https://kubernetes.default.svc
   project: default
   source:
-    chart: evicted-pod-cleaner.yaml
+    chart: evicted-pod-cleaner
     helm:
       valueFiles:
       - https://raw.githubusercontent.com/maifujalam/k8s_aws/refs/heads/master/k8s/kaniko-chart-build/evicted-pod-cleaner/values.yaml
