@@ -9,7 +9,7 @@ pipeline {
         string(name: 'GIT_BRANCH_NAME', defaultValue: 'master', description: 'Enter the branch name to pull from.')
         string(name: 'ARGO_APP_FOLDER_PATH', defaultValue: 'k8s/argocdApplication', description: 'Enter the folder path name of Argocd Apps.')
         string(name: 'ARGO_APP_NAME',defaultValue: 'evicted-pod-cleaner', description: 'Enter ArgoCD App Name to deploy.Example:- evicted-pod-cleaner')
-        string(name: 'ARGO_APP_VERSION', defaultValue: '1.0.0',description: 'Enter ArgoCD App Version to deploy.Example:- 1.0.1')
+        string(name: 'ARGO_APP_VERSION', defaultValue: '1.0.4',description: 'Enter ArgoCD App Version to deploy.Example:- 1.0.1')
     }
     stages {
         stage('Update argocd application') {
@@ -17,10 +17,11 @@ pipeline {
                 script {
                      dir("${params.ARGO_APP_FOLDER_PATH}") {
                             echo "Folder of ArgoCD Apps: ${params.CHART_FOLDER_PATH}";
-                            def output = sh(script: "find . -maxdepth 1 -type f -iname '${params.ARGO_APP_NAME}*'", returnStdout: true).trim()
-                            echo "Application File:- ${output}"
+                            def app_file = sh(script: "find . -maxdepth 1 -type f -iname '${params.ARGO_APP_NAME}*'", returnStdout: true).trim()
+                            echo "Application File:- ${app_file}"
                             try {
-                                 yq -i ".spec.source.targetRevision='${ARGO_APP_VERSION}'"
+                                def output_yq = sh(script: " yq -i .spec.source.targetRevision='${ARGO_APP_VERSION}' ${app_file}", returnStdout: true).trim()
+                                echo "Application File:- ${output_yq}"
                             } catch (Exception e) {
                                 error("Version upgrade error ${e}")
                             }
