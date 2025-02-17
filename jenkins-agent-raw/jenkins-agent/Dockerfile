@@ -14,5 +14,6 @@ RUN yum -y update && yum install -y vim wget tar  && rm -rf /var/lib/apt/lists/*
 RUN sh 8_install_helm.sh
 RUN sh install-terraform.sh
 RUN sh get_jq.sh
+RUN sh get_yq.sh
 
 USER jenkins

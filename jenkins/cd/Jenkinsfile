@@ -12,19 +12,14 @@ pipeline {
         string(name: 'ARGO_APP_VERSION', defaultValue: '1.0.0',description: 'Enter ArgoCD App Version to deploy.Example:- 1.0.1')
     }
     stages {
-        stage('Create argocd application') {
+        stage('Update argocd application') {
             steps {
                 script {
                      dir("${params.ARGO_APP_FOLDER_PATH}") {
                             echo "Folder of ArgoCD Apps: ${params.CHART_FOLDER_PATH}";
                             def output = sh(script: "find . -maxdepth 1 -type f -iname '${params.ARGO_APP_NAME}*'", returnStdout: true).trim()
-                            echo "Output: ${output}"
+                            echo "Application File:- ${output}"
                             try {
-                                // Run helm template command
-                                def output2 = sh(script: "echo $PATH; ls /usr/local/bin", returnStdout: true).trim()
-                                  echo "Output2: ${output2}"
-                                def output3 = sh(script: "jq --version", returnStdout: true).trim()
-                                  echo "Output3: ${output3}"
 
                             } catch (Exception e) {
                                 error("Helm template validation failed: ${e}")
@@ -34,7 +29,7 @@ pipeline {
             }
         }
 
-        stage('Push Argocd Application') {
+        stage('Push to Git') {
             when {
                 expression {
                     // Proceed only if the previous step was successful
