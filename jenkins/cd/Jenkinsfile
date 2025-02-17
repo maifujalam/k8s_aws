@@ -5,27 +5,27 @@ pipeline {
         HELM_VALUES_FILE = 'values.yaml'
     }
     parameters {
-        string(name: 'GIT_REPO_NAME', defaultValue: 'https://github.com/maifujalam/k8s_aws.git', description: 'Enter the git remote name')
-        string(name: 'GIT_BRANCH_NAME', defaultValue: 'master', description: 'Enter the branch name to pull from')
-        string(name: 'ARGO_APP_FOLDER_PATH', defaultValue: 'k8s/argocdApplication', description: 'Enter the folder path name which to be helm build')
-        string(name: 'ARGO_APP_NAME', description: 'Enter ArgoCD App Name to deploy')
-        string(name: 'ARGO_APP_VERSION', defaultValue: '1.0.0',description: 'Enter ArgoCD App Version to deploy')
+        string(name: 'GIT_REPO_NAME', defaultValue: 'https://github.com/maifujalam/k8s_aws.git', description: 'Enter the git remote name.')
+        string(name: 'GIT_BRANCH_NAME', defaultValue: 'master', description: 'Enter the branch name to pull from.')
+        string(name: 'ARGO_APP_FOLDER_PATH', defaultValue: 'k8s/argocdApplication', description: 'Enter the folder path name of Argocd Apps.')
+        string(name: 'ARGO_APP_NAME', description: 'Enter ArgoCD App Name to deploy.Example:- evicted-pod-cleaner')
+        string(name: 'ARGO_APP_VERSION', defaultValue: '1.0.0',description: 'Enter ArgoCD App Version to deploy.Example:- 1.0.1')
     }
     stages {
-//         stage('Checkout') {
-//             steps {
-//                 // Checkout code from SCM (Git, etc.)
-//                 checkout scm
-//             }
-//         }
-
         stage('Create argocd application') {
             steps {
                 script {
-                    sh """
-                        echo "Looking for existing app"
-                        ls -al
-                    """
+                     dir("${params.ARGO_APP_FOLDER_PATH}") {
+                            echo "Folder of ArgoCD Apps: ${params.CHART_FOLDER_PATH}";
+                            def output = sh(script: 'ls | grep -i ${params.ARGO_APP_NAME}' , returnStdout: true).trim()
+                            echo "Output: ${output}"
+                            try {
+                                // Run helm template command
+                                jq
+                            } catch (Exception e) {
+                                error("Helm template validation failed: ${e}")
+                            }
+                     }
                 }
             }
         }
