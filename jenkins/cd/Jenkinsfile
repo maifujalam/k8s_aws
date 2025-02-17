@@ -20,9 +20,9 @@ pipeline {
                             def output = sh(script: "find . -maxdepth 1 -type f -iname '${params.ARGO_APP_NAME}*'", returnStdout: true).trim()
                             echo "Application File:- ${output}"
                             try {
-
+                                 yq -i ".spec.source.targetRevision='${ARGO_APP_VERSION}'"
                             } catch (Exception e) {
-                                error("Helm template validation failed: ${e}")
+                                error("Version upgrade error ${e}")
                             }
                      }
                 }
@@ -40,8 +40,7 @@ pipeline {
                 script {
                     // Build and package the Helm chart
                     sh """
-                        helm lint ${HELM_CHART_DIR}
-                        helm package ${HELM_CHART_DIR}
+                        echo "Pushing to Git"
                     """
                 }
             }
