@@ -1,6 +1,6 @@
 FROM jenkins/inbound-agent:3273.v4cfe589b_fd83-1-rhel-ubi9-jdk17
 
-COPY .. .
+COPY . .
 
 USER root
 
