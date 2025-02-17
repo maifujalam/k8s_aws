@@ -174,6 +174,6 @@ Helm Package:-
 3. helm  
 
 evicted-pod-cleaner:-
-1. helm install evicted-pod-cleaner public-helm-repository/evicted-pod-cleaner --version 1.0.2 -n evicted-pod-cleaner --create-namespace
-2. helm pull public-helm-repository/evicted-pod-cleaner  --version 1.0.1 --untar
+1. helm install evicted-pod-cleaner public-helm-repository/evicted-pod-cleaner --version 1.0.3 -n evicted-pod-cleaner --create-namespace
+2. helm pull public-helm-repository/evicted-pod-cleaner  --version 1.0.3 --untar
 3. helm -n evicted-pod-cleaner uninstall evicted-pod-cleaner
