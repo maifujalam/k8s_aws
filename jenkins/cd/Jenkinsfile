@@ -21,7 +21,7 @@ pipeline {
                             echo "Output: ${output}"
                             try {
                                 // Run helm template command
-                                def output2 = sh(script: "echo $PATH; ls /usr/local/bin;jq", returnStdout: true).trim()
+                                def output2 = sh(script: "echo $PATH; ls /usr/local/bin", returnStdout: true).trim()
                                   echo "Output2: ${output2}"
 
                             } catch (Exception e) {
