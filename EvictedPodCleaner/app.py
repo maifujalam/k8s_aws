@@ -4,7 +4,7 @@ from time import sleep
 import kubernetes
 
 if __name__ == '__main__':
-    kubernetes.config.load_kube_config()
+    kubernetes.config.load_incluster_config()
     v1=kubernetes.client.CoreV1Api()
     while True:
         print("Sleeping 5 sec...")
