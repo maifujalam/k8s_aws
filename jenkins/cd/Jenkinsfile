@@ -1,34 +1,31 @@
 pipeline {
     agent any
-
     environment {
         HELM_CHART_DIR = 'helm-chart-directory'
         HELM_VALUES_FILE = 'values.yaml'
-        DOCKER_IMAGE_TAG = 'latest'
     }
-
+    parameters {
+        string(name: 'GIT_REPO_NAME', defaultValue: 'https://github.com/maifujalam/k8s_aws.git', description: 'Enter the git remote name')
+        string(name: 'GIT_BRANCH_NAME', defaultValue: 'master', description: 'Enter the branch name to pull from')
+        string(name: 'ARGO_APP_FOLDER_PATH', defaultValue: 'k8s/argocdApplication', description: 'Enter the folder path name which to be helm build')
+        string(name: 'ARGO_APP_NAME', description: 'Enter ArgoCD App Name to deploy')
+        string(name: 'ARGO_APP_VERSION', defaultValue: '1.0.0',description: 'Enter ArgoCD App Version to deploy')
+    }
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout code from SCM (Git, etc.)
-                checkout scm
-            }
-        }
+//         stage('Checkout') {
+//             steps {
+//                 // Checkout code from SCM (Git, etc.)
+//                 checkout scm
+//             }
+//         }
 
         stage('Create argocd application') {
             steps {
                 script {
-                    // Check if the values.yaml file has been modified
-                    def changes = sh(script: "git diff --name-only HEAD HEAD~1", returnStdout: true).trim()
-
-                    if (changes.contains(HELM_CHART_DIR + '/' + HELM_VALUES_FILE)) {
-                        echo "Changes detected in ${HELM_VALUES_FILE}. Proceeding with Helm chart build."
-                        currentBuild.result = 'SUCCESS'
-                    } else {
-                        echo "No changes detected in ${HELM_VALUES_FILE}. Skipping Helm chart build."
-                        currentBuild.result = 'ABORTED'
-                        error("No changes in Helm values.yaml. Skipping the build.")
-                    }
+                    sh """
+                        echo "Looking for existing app"
+                        ls -al
+                    """
                 }
             }
         }
