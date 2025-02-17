@@ -7,5 +7,5 @@ if [[ ! -f /tmp/jq ]];then
   echo "Downloading Binary.."
   wget jq $URL
 fi
-sudo chmod +x jq-linux-amd64
-sudo cp jq-linux-amd64 /usr/local/bin/jq
+chmod +x jq-linux-amd64
+cp jq-linux-amd64 /usr/local/bin/jq

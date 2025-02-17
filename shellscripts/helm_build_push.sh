@@ -34,4 +34,3 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Helm chart Successfully pushed to the repository."
-helm s3 reindex public-helm-repository
