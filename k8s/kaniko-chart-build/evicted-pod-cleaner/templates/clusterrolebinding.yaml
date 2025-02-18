@@ -5,6 +5,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ .Values.serviceAccount.name }}
+    namespace: {{ .Values.nameOverride }}
 roleRef:
   kind: ClusterRole
   name:  {{ include "evicted-pod-cleaner.fullname" . }}-role
