@@ -12,7 +12,7 @@ if __name__ == '__main__':
         pods=v1.list_pod_for_all_namespaces(watch=False)
         count=0
         for pod in pods.items:
-            print("Checking "+pod.metadata.name + " | " + pod.metadata.namespace + " | " + pod.status.phase)
+            print("Checking Pod:"+pod.metadata.name + " Namespace: " + pod.metadata.namespace + " Status: " + pod.status.phase)
             if pod.status.phase != 'Running' and pod.status.phase != 'Succeeded':
                 print("Evicted Pod"+pod.metadata.name+ " | "+pod.metadata.namespace+" | "+pod.status.phase)
             try:
