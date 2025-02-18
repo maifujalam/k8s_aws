@@ -8,5 +8,5 @@ subjects:
     namespace: {{ .Values.nameOverride }}
 roleRef:
   kind: ClusterRole
-  name:  {{ include "evicted-pod-cleaner.fullname" . }}-role
+  name:  {{ include "evicted-pod-cleaner.fullname" . }}-clusterrole
   apiGroup: rbac.authorization.k8s.io
