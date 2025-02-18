@@ -12,7 +12,7 @@ if __name__ == '__main__':
         pods=v1.list_pod_for_all_namespaces(watch=False)
         count=0
         for pod in pods.items:
-            if pod.status.phase != 'Running' or pod.status.phase != 'Succeeded':
+            if pod.status.phase != 'Running' and pod.status.phase != 'Succeeded':
                 print(pod.metadata.name+ " | "+pod.metadata.namespace+" | "+pod.status.phase)
             try:
                 if pod.status.reason:
