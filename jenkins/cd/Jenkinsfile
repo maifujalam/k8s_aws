@@ -44,11 +44,13 @@ pipeline {
             }
             steps {
                 withCredentials([gitUsernamePassword(credentialsId: 'git-jenkins', gitToolName: 'Default')]) {
+                    sh '''
                     git config --global user.email "sk.maifujalam@gmail.com"
                     git config --global user.name "Jenkins"
-                    sh "git add ."
-                    sh "git commit -m 'Add testfile from Jenkins Pipeline'"
-                    sh "git push -u origin main"
+                    git add .
+                    git commit -m "Add testfile from Jenkins Pipeline"
+                    git push -u origin main"
+                    '''
                 }
             }
         }
