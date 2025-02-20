@@ -43,25 +43,10 @@ pipeline {
                 }
             }
             steps {
-                script {
-                    // Build and package the Helm chart
-                    sh """
-                        echo "Pushing to Git"
-
-                        git config --global user.email "jenkins@example.com"
-                        git config --global user.name "Jenkins CI"
-
-                        echo "Checking out master branch"
-                        git checkout master
-
-                        echo "Adding and committing changes"
-                        git add .
-                        git commit -m "Automated commit from Jenkins"
-
-                        echo "Pushing changes to master"
-                        git push origin master
-                    """
-
+                withCredentials([gitUsernamePassword(credentialsId: 'git-jenkins', gitToolName: 'Default')]) {
+                    sh "git add ."
+                    sh "git commit -m 'Add testfile from Jenkins Pipeline'"
+                    sh "git push -u origin main"
                 }
             }
         }
