@@ -22,7 +22,7 @@ pipeline {
                             try {
                                 // def output_yq = sh(script: "yq -i .spec.source.targetRevision='${params.ARGO_APP_VERSION}'" '${app_file}'", returnStdout: true).trim()
                                   sh """
-                                      yq -i '.spec.source.targetRevision = "'"$ARGO_APP_VERSION"'"' $APP_FILE
+                                      yq -i '.spec.source.targetRevision = "'"${params.ARGO_APP_VERSION}"'"' ${params.APP_FILE}
                                   """
                                 echo "Application File:- ${output_yq}"
                                 def cat_file=sh(script: "cat ${app_file}", returnStdout: true).trim()
