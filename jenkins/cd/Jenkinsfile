@@ -22,12 +22,12 @@ pipeline {
                             try {
                                 // def output_yq = sh(script: "yq -i .spec.source.targetRevision='${params.ARGO_APP_VERSION}'" '${app_file}'", returnStdout: true).trim()
                                   def cat1=sh(script: "cat '${app_file}'", returnStdout: true).trim()
-                                  echo "Application File:- $cat1}"
+                                  echo "Before Patching:- \n$cat1}"
                                   sh """
                                       yq -i '.spec.source.targetRevision="'"${params.ARGO_APP_VERSION}"'"' ${app_file}
                                   """
                                   def cat_file=sh(script: "cat ${app_file}", returnStdout: true).trim()
-                                  echo "Application File Out:- ${cat_file}"
+                                  echo "After Patching:- \n${cat_file}"
                             } catch (Exception e) {
                                 error("Version upgrade error ${e}")
                             }
