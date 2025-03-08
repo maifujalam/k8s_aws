@@ -10,5 +10,5 @@ subnet_name      = "subnet-2"
 spot_instance    = false
 private_ip = "172.31.0.6" # Starting digit of private ip ( will increase last digit based on count value).
 security_group   = "default-sg"
-instance_type    = "t3a.midium"
+instance_type    = "t3a.medium"
 iam_instance_profile = "ec2-full-policy"
