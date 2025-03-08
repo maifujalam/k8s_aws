@@ -906,6 +906,7 @@ server:
 
         listener "tcp" {
           tls_disable = 1
+          cluster_name = "vault-integrated-storage"
           address = "[::]:8200"
           cluster_address = "[::]:8201"
           # Enable unauthenticated metrics access (necessary for Prometheus Operator)
