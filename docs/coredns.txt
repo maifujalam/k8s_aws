@@ -3,3 +3,14 @@
 3. kubectl patch deployment coredns -n kube-system -p '{"spec":{"template":{"spec":{"containers":[{"name":"coredns", "image":"coredns/coredns:1.11.3"}]}}}}'
 4.
 
+
+apiVersion: v1
+data:
+  Corefile: |
+    .:53 {
+        log
+        dump
+        errors
+        health {
+           lameduck
+
